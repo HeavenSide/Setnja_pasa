@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+}
+
+.img-bg {
+    height: 500px;
+    background-image: url("imgs/hero-image.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    color: white;
+}
+
+.form-input h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-area {
+    background-color: white;
+    padding: 30px;
+}
+
+.form-group label {
+    font-weight: bold;
+}

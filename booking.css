@@ -1,0 +1,63 @@
+body {
+    padding: 20px;
+    background-image: url("imgs/hero-img-3.jpg");
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+    margin: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Background overlay */
+body::before {
+    font-family: Roboto,"sans-serif";
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+    z-index: 0;
+}
+
+.booking-form {
+    width: 60em;
+    padding: 80px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 5px 10px -5px rgba(0, 0, 0, 0.1);
+    z-index: 1; /* Place form above the overlay */
+}
+
+/* Form header */
+.booking-form h2 {
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form fields */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Submit button */
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #1F8642;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #114823;
+}
