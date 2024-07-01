@@ -1,133 +1,24 @@
 <?php
-include "navigation.php"
+include "navigation.php";
 ?>
 
-<div id="section3" class="container-fluid section" style="padding-left: 70px; padding-right: 70px; background-color: #10221B; color: white">
-    <h1>Walkers</h1>
-    <div class="best_rewieed_walkers">
-        <h1>Best reviewed walkers</h1>
-        <div class="best_imgs">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 1">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 2">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 3">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 4">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 4">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="most_active_walkers">
-        <h1>Most Active Walkers</h1>
-        <div class="best_imgs">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 1">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 2">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 3">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="#" class="card-img-top" alt="Image 4">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card">
-                            <img src="" alt="Image 4">
-                            <div class="card-body">
-                                <h4>fname lname</h4>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <button>dugme</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div style="display: flex; justify-content: center; margin-top: 20px; padding: 80px 0 50px 0;">
+    <div class="input-group" style="width: auto; display: flex;">
+        <form class="d-flex" method="get" action="search_results.php" style="display: flex; align-items: center;">
+            <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search" id="form1" style="flex-grow: 5; min-width: 300px; max-width: 800px; border: 2px solid gray; border-radius: 5px 0 0 5px; padding: 10px;">
+            <button type="submit" class="btn btn-success" style="border-radius: 0 5px 5px 0; padding: 10px;">
+                <i class="fas fa-search"></i> 
+            </button>
+        </form>
     </div>
 </div>
 
-
-
 <?php
-include "footer.php"
+include "cards.php";
 ?>
 
+<!-- promotion and footer -->
+<?php
+include "promotion.php";
+include "footer.php";
+?>
