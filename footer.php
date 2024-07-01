@@ -63,7 +63,7 @@
         <!-- Copyright -->
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
             © 2024 Copyright:
-            <a class="text-white" href="http://localhost/setnja%20pasa/dog_walk_index.php">Paws&Paths</a>
+            <a class="text-white" href="https://42.stud.vts.su.ac.rs/setnja_pasa/index.php">Paws&Paths</a>
         </div>
     </div>
 </footer>
