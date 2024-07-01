@@ -1,81 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Page 2</title>
-    <!-- Include CSS for Page 2 -->
-    <link rel="stylesheet" type="text/css" href="log.css">
-
-    <?php
-    include "navigation.php"
-    ?>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
 <body>
 
-<section class="myform-area" style="justify-content: center; padding: 5em">
-    <div class="container">
+<form id="loginForm" action="log_in_process.php" method="post">
+    <h2>Login</h2>
+    <label for="nickname">Nickname:</label>
+    <input type="text" id="nickname" name="nickname" required>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-8" style="box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;">
+    <label for="logpassword">Password:</label>
+    <input type="password" id="logpassword" name="logpassword" required>
 
-                <div class="form-area login-form">
-                    <div class="row">
+    <label for="userType">User Type:</label><br>
+    <select id="userTypeLI" name="userTypeLI">
+        <option value="regular">User</option>
+        <option value="premium">Walker</option>
+    </select>
 
-                        <div class="col-lg-6 img-bg">
-                            <div class="form-content">
-                                <h2>Login</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla non aperiam cum quas quod reprehenderit.</p>
-                            </div>
-                        </div>
+    <input type="submit" value="Submit">
 
-                        <div class="col-lg-6">
-                            <div class="form-input">
-                                <h2>Login Form</h2>
-                                <form>
-                                    <div class="form-group">
-                                        <input type="text" id="name" name="name" class="form-control" required>
-                                        <label for="name">User Name</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" id="password" name="password" class="form-control" required>
-                                        <label for="password">Password</label>
-                                    </div>
+    <p>Don't have an account? <a href="#" onclick="openSignupForm()">Sign up here</a>.</p>
+</form>
 
-                                    <!-- User Type Group -->
-                                    <div class="form-group">
-                                        <label for="user-type">User Type</label>
-                                        <div id="user-type" class="form-check">
-                                            <input type="radio" id="walker" name="user-type" value="walker" class="form-check-input" required>
-                                            <label for="walker" class="form-check-label">Walker</label>
-                                        </div>
-                                        <div id="user-type" class="form-check">
-                                            <input type="radio" id="regular-user" name="user-type" value="regular-user" class="form-check-input" required>
-                                            <label for="regular-user" class="form-check-label">Regular User</label>
-                                        </div>
-                                        <div id="user-type" class="form-check">
-                                            <input type="radio" id="admin" name="user-type" value="admin" class="form-check-input" required>
-                                            <label for="admin" class="form-check-label">Admin</label>
-                                        </div>
-                                    </div>
 
-                                    <!-- Rest of the form, including the submit button -->
-                                    <div class="myform-button">
-                                        <button type="submit" class="btn btn-success btn-block">Sign Up</button>
-                                    </div>
+   <p>Forgot your password? <a href="forgotten_password.php">Click here</a> to reset it.
+</p>
+</form>
 
-                                    <!-- Error Messages -->
-                                    <div class="error-message mt-3">
-                                        <!-- This section can be used to display error messages after form submission -->
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+<!-- JavaScript za otvaranje i zatvaranje formi -->
+<script>
+    function openSignupForm() {
+        document.getElementById("signupForm").style.display = "block";
+        document.getElementById("loginForm").style.display = "none"; // Zatvara login formu
+    }
 
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    function openLoginForm() {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("signupForm").style.display = "none"; // Zatvara signup formu
+    }
+</script>
 
 </body>
 </html>
