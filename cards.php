@@ -19,8 +19,7 @@
 
         foreach($walkers as $walker)
         {
-            echo '<div class="card-walkers"><img src="'.$walker['photo'].'" alt="User Image" style="width:100%"><h3>'.$walker['fname'].' '.$walker['lname'].'</h3><p>'.$walker['about'].
-                '</p><button name="walker_id_button" class="hire-button" value="'.$walker['walker_id'].'" onclick="viewWalkerProfile('.$walker['walker_id'].')">View profile</button></div>';
+            echo '<div class="card-walkers"><img src="'.$walker['photo'].'" alt="User Image" style="width:100%"><h3>'.$walker['fname'].' '.$walker['lname'].'</h3><p>'.$walker['about'].'</p><button class="hire-button" value="'.$walker['walker_id'].'">Hire</button></div>';
         }
         ?>
     </div>
@@ -36,8 +35,7 @@
 
         foreach($walkers as $walker)
         {
-            echo '<div class="card-walkers"><img src="'.$walker['photo'].'" alt="User Image" style="width:100%"><h3>'.$walker['fname'].' '.$walker['lname'].'</h3><p>'.$walker['about'].
-                '</p><button name="walker_id_button" class="hire-button" value="'.$walker['walker_id'].'" onclick="viewWalkerProfile('.$walker['walker_id'].')">View profile</button></div>';
+            echo '<div class="card-walkers"><img src="'.$walker['photo'].'" alt="User Image" style="width:100%"><h3>'.$walker['fname'].' '.$walker['lname'].'</h3><p>'.$walker['about'].'</p><button class="hire-button" value="'.$walker['walker_id'].'">Hire</button></div>';
         }
         ?>
     </div>
@@ -52,11 +50,7 @@
 </div>
 
 <script>
-    function viewWalkerProfile(walkerId) {
-        window.location.href = 'profile.php?walker_id=' + walkerId;
-    }
-
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         var hireButtons = document.getElementsByClassName('hire-button');
 
         Array.from(hireButtons).forEach(function(button) {

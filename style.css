@@ -23,11 +23,6 @@ body {
     transform: scale(1.1);
 }
 
-/* Footer section */
-.statistics {
-    text-align: center;
-}
-
 /* Main page sections */
 
     /* Section 1 */
@@ -107,12 +102,8 @@ body {
             }
         }
     }
-        /* section 4 */
-        #section4{
 
-        }
-
-        /* statistic 2 */
+        /* Promotion ??? */
         #join-us{
             background-color: #1F8642;
             height: auto;
@@ -139,7 +130,7 @@ body {
         background-position: center;
     }
     .transparent-bg {
-        background-color: rgba(0, 0, 0, 0.8); /* 50% transparent black */
+        background-color: rgba(0, 0, 0, 0.9); /* 50% transparent black */
     }
     .location-map{
         padding-left: 4em;
@@ -218,3 +209,4 @@ body {
 
 
 }
+
