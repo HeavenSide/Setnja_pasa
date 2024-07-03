@@ -43,9 +43,7 @@
     <script src="test.js"></script>
 </head>
 <body>
-    <?php
-session_start();
-?>
+<?php session_start(); ?>
 
 <form id="signingUpForm" action="sign_up_processing.php" method="post" enctype="multipart/form-data">
     <h2>Sign Up</h2>
@@ -103,11 +101,7 @@ session_start();
     function toggleWalkerFields() {
         var userType = document.getElementById("userType").value;
         var walkerFields = document.getElementById("walkerFields");
-        if (userType === "premium") {
-            walkerFields.style.display = "block";
-        } else {
-            walkerFields.style.display = "none";
-        }
+        walkerFields.style.display = userType === "premium" ? "block" : "none";
     }
 
     function openLoginForm() {

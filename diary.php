@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Walker's Diary</title>
     <link rel="stylesheet" href="css/diary.css">
-    <style>
-     body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-    </style>
 </head>
 <body>
 <?php
@@ -62,7 +55,7 @@ if ($_SESSION['role'] == 'user' && $_SESSION['allowed'] == 0) {
             <select id="walk_id" name="walk_id" required>
                 <?php
                 require_once 'db_config.php';
-                $stmt = $dbh->prepare("SELECT walk_id, owner_name FROM dog_walking_appt WHERE walker = :walker");
+                $stmt = $dbh->prepare("SELECT walk_id, owner_name FROM dog_walking_appt WHERE walker = :walker AND accepted = 1 AND done = 1");
                 $stmt->bindParam(':walker', $_SESSION['name'], PDO::PARAM_STR);
                 $stmt->execute();
                 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -79,7 +72,7 @@ if ($_SESSION['role'] == 'user' && $_SESSION['allowed'] == 0) {
             <select id="walk_id" name="walk_id" required>
                 <?php
                 require_once 'db_config.php';
-                $stmt = $dbh->prepare("SELECT dwp.walk_id, dwp.walker, w.rating_enable FROM dog_walking_appt dwp INNER JOIN walker w ON dwp.walker=w.email WHERE dwp.owner_name = :user AND w.rating_enable=:code");
+                $stmt = $dbh->prepare("SELECT dwp.walk_id, dwp.walker, w.rating_enable FROM dog_walking_appt dwp INNER JOIN walker w ON dwp.walker=w.email WHERE dwp.owner_name = :user AND w.rating_enable = :code");
                 $stmt->bindParam(':user', $_SESSION['name'], PDO::PARAM_STR);
                 $stmt->bindParam(':code',   $_SESSION['rating_walker'],PDO::PARAM_INT);
                 $stmt->execute();
@@ -103,7 +96,7 @@ if ($_SESSION['role'] == 'user' && $_SESSION['allowed'] == 0) {
         <button id="popupButton" onclick="closePopup()">OK</button>
     </div>
     <?php if ($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin'): ?>
-        <h2>Walks Log</h2>
+        <h2>To be rated</h2>
         <?php
         // Displaying the walks log
         $stmt = $dbh->prepare("SELECT * FROM dog_walking_appt WHERE walker = :walker ORDER BY booking_date DESC");
@@ -113,14 +106,13 @@ if ($_SESSION['role'] == 'user' && $_SESSION['allowed'] == 0) {
 
         if (count($walks) > 0) {
             echo "<table>";
-            echo "<tr><th>Description</th><th>Path</th><th>Duration</th><th>Walker</th><th>Rating</th></tr>";
+            echo "<tr><th>Description</th><th>Path</th><th>Duration</th><th>Owner</th></tr>";
             foreach ($walks as $walk) {
                 echo "<tr>";
                 echo "<td>" . htmlspecialchars($walk["walker_view"]) . "</td>";
-                echo "<td>" . htmlspecialchars($walk["user_view"]) . "</td>";
                 echo "<td>" . htmlspecialchars($walk["path"]) . "</td>";
                 echo "<td>" . htmlspecialchars($walk["duration"]) . "</td>";
-                echo "<td>" . htmlspecialchars($walk["walk_rating"]) . "</td>";
+                echo "<td>" . htmlspecialchars($walk["owner_name"]) . "</td>";
                 echo "</tr>";
             }
             echo "</table>";

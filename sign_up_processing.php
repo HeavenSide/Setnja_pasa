@@ -98,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
                         $mail->send();
                         echo "<script>alert('Sign up successful! Wait for an admin  to approve, and insert a code during your first login. The code has been sent to your email');window.location.href = 'index.php';</script>";
+                        exit();
                     }
                     else
                     {

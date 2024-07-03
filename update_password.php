@@ -1,39 +1,64 @@
 <?php
-// Ensure sessions are started
 session_start();
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+header('Content-Type: application/json');
+
+if (!isset($_SESSION['name'])) {
+    echo json_encode(['success' => false, 'message' => 'You are not logged in']);
+    exit();
+}
 
 require_once "db_config.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_SESSION['name'];
-    $newPassword = $_POST['newPassword'];
+$username = $_SESSION['name'];
+$newPassword = isset($_POST['newPassword']) ? $_POST['newPassword'] : '';
 
-    if (empty($newPassword)) {
-        echo "Password cannot be empty.";
+if (empty($newPassword)) {
+    echo json_encode(['success' => false, 'message' => 'Password cannot be empty']);
+    exit();
+}
+
+$newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+
+try {
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Fetch current hashed password to prevent setting the same password
+    if ($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin') {
+        $sql = "SELECT password FROM walker WHERE email = :username";
+    } else {
+        $sql = "SELECT password FROM user WHERE email = :username";
+    }
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($result && password_verify($newPassword, $result['password'])) {
+        header("Location: profile.php?err=1");
         exit();
     }
 
-    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-
-    try {
-        if ($_SESSION['role'] == 'walker') {
-            $sql = "UPDATE walker SET password = :newPassword WHERE email = :username";
-        } elseif ($_SESSION['role'] == 'user') {
-            $sql = "UPDATE user SET password = :newPassword WHERE email = :username";
-        }
-
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':newPassword', $hashedPassword, PDO::PARAM_STR);
-        $query->bindParam(':username', $username, PDO::PARAM_STR);
-        $query->execute();
-
-        if ($query->rowCount() > 0) {
-            echo "Password updated successfully.";
-        } else {
-            echo "Failed to update password.";
-        }
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+    // Update password
+    if ($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin') {
+        $sql = "UPDATE walker SET password = :password WHERE email = :username";
+    } else {
+        $sql = "UPDATE user SET password = :password WHERE email = :username";
     }
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':password', $newPasswordHash, PDO::PARAM_STR);
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        header("Location: profile.php?succ=1");
+        exit();
+    }
+} catch (PDOException $e) {
+    header("Location: profile.php?succ=2");
+    exit();
 }
 ?>

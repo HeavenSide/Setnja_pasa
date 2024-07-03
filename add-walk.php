@@ -13,8 +13,7 @@ include 'db_config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if($_SESSION['role']=='walker' || $_SESSION['role']=='admin'){
-
+    if($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin') {
 
         $description = isset($_POST['description']) ? $_POST['description'] : '';
         $path = isset($_POST['path']) ? $_POST['path'] : '';
@@ -30,26 +29,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             try {
                 $sql = $dbh->prepare("
-                UPDATE dog_walking_appt 
-                SET 
-                    walker_view = :description, 
-                    path = :path, 
-                    duration = :duration
-                WHERE 
-                    walk_id = :activation_code
-            ");
+                    UPDATE dog_walking_appt 
+                    SET 
+                        walker_view = :description, 
+                        path = :path, 
+                        duration = :duration
+                    WHERE 
+                        walk_id = :walk_id
+                ");
 
                 $sql->bindParam(':description', $description, PDO::PARAM_STR);
                 $sql->bindParam(':path', $path, PDO::PARAM_STR);
                 $sql->bindParam(':duration', $duration, PDO::PARAM_STR);
-                $sql->bindParam(':activation_code', $walk_id, PDO::PARAM_INT);
+                $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
 
                 if ($sql->execute()) {
                     // Fetch the user's email and walker's rating code
-                    $stmt = $dbh->prepare("SELECT dwp.owner_name, w.rating_enable 
-                                       FROM dog_walking_appt dwp
-                                       JOIN walker w ON dwp.walker = w.email 
-                                       WHERE walk_id = :walk_id");
+                    $stmt = $dbh->prepare("
+                        SELECT dwp.owner_name, w.rating_enable 
+                        FROM dog_walking_appt dwp
+                        JOIN walker w ON dwp.walker = w.email 
+                        WHERE walk_id = :walk_id
+                    ");
                     $stmt->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
                     $stmt->execute();
                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         try {
                             $mailMessage = "Hello,\n\nThank you for using our dog walking service. Please use the following code to rate your walker: " . $result['rating_enable'] . "\n\nBest regards,\nPaws&Pets";
                             $mailTitle = "Rate Your Walker";
-                            $mailTo = $result['owner_name']."@gmail.com";
+                            $mailTo = $result['owner_name'] . "@gmail.com";
 
                             $mail->SMTPDebug = SMTP::DEBUG_SERVER;
                             $mail->isSMTP();
@@ -95,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-    } else if($_SESSION['role']=='user'){
+    } else if($_SESSION['role'] == 'user') {
         $description = isset($_POST['userDescription']) ? $_POST['userDescription'] : '';
         $walk_id = isset($_POST['walk_id']) ? $_POST['walk_id'] : '00';
         $rating = isset($_POST['rating']) ? $_POST['rating'] : 0;
@@ -106,33 +107,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             try {
                 $sql = $dbh->prepare("
-                UPDATE dog_walking_appt 
-                SET 
-                    user_view = :description, 
-                    walk_rating = :rating
-                WHERE 
-                    walk_id = :activation_code
-            ");
+                    UPDATE dog_walking_appt 
+                    SET 
+                        user_view = :description, 
+                        walk_rating = :rating
+                    WHERE 
+                        walk_id = :walk_id
+                ");
 
                 $sql->bindParam(':description', $description, PDO::PARAM_STR);
                 $sql->bindParam(':rating', $rating, PDO::PARAM_INT);
-                $sql->bindParam(':activation_code', $walk_id, PDO::PARAM_INT);
+                $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
 
-                if ($sql->execute())
-                    $_SESSION['allowed']=0;
+                if ($sql->execute()) {
+                    $_SESSION['allowed'] = 0;
+
+                    $sql = $dbh->prepare("
+                        INSERT INTO walks (walker_view, user_view, path, duration, rating, date, walker, walk_id, email)
+                        SELECT walker_view, user_view, path, duration, walk_rating, booking_date, walker, walk_id, owner_name
+                        FROM dog_walking_appt
+                        WHERE walk_id = :walk_id
+                    ");
+                    $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
+
+                    if ($sql->execute()) {
+                        $sql = $dbh->prepare("
+                            UPDATE walker 
+                            SET ppl_rated = ppl_rated + 1, 
+                                rating = rating + (SELECT walk_rating FROM dog_walking_appt WHERE walk_id = :walk_id)
+                            WHERE email = (SELECT walker FROM dog_walking_appt WHERE walk_id = :walk_id)
+                        ");
+                        $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
+
+                        if ($sql->execute()) {
+                            $sql = $dbh->prepare("
+                                DELETE FROM dog_walking_appt 
+                                WHERE walk_id = :walk_id
+                            ");
+                            $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
+                            $sql->execute();
+                        }
+                    }
+                }
             } catch (PDOException $e) {
                 $message = "Error: " . $e->getMessage();
             }
         }
-
-        $sql=$dbh->prepare("INSERT INTO walks (walker_view, user_view, path, duration, rating, date, walker, walk_id, email)
-        SELECT walker_view, user_view,  path, duration, walk_rating, booking_date, walker, walk_id, owner_name");
-
-        if($sql->execute()){
-            $sql=$dbh->prepare("DELETE FROM dog_walking_appt WHERE walk_id=:walk_id");
-            $sql->bindParam(':walk_id', $walk_id, PDO::PARAM_INT);
-        }
-
     }
 
     $dbh = null;

@@ -89,11 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             font-family: Arial, sans-serif;
             text-align: center;
-            padding-top: 80px; /* Dodajemo padding na vrhu cijelog body-ja */
+            padding-top: 80px;
         }
         .container {
             text-align: center;
-            margin-top: -60px; /* Ovo možete prilagoditi prema potrebi */
+            margin-top: -60px; 
         }
         h3 {
             font-size: 36px;

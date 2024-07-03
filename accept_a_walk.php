@@ -22,11 +22,12 @@ $stmt_walking = $dbh->prepare('
         dwp.start_time, 
         dwp.end_time, 
         dwp.accepted, 
-        dwp.done 
+        dwp.done,
+        dwp.replied
     FROM dog_walking_appt dwp 
     INNER JOIN user u 
     ON u.email = dwp.owner_name 
-    WHERE dwp.walker = :walker
+    WHERE dwp.walker = :walker AND dwp.replied=0
 ');
 
 // Bind the parameter
@@ -99,71 +100,77 @@ echo "<br><br><br>";
     </style>
 </head>
 <body>
-    <div class="content">
-        <h3><b>Requested walks:</b></h3>
-        <?php if (empty($walking)): ?>
-            <p>No walks found.</p>
-        <?php else: ?>
-            <small>Click on <button>decline</button> to refuse a walk, or on <button>accept</button> to accept a walk.</small>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Phone number</th>
-                        <th>Dog's name</th>
-                        <th>Breed</th>
-                        <th>Age</th>
-                        <th>Start time - End time</th>
-                        <th>Date</th>
-                        <th>Accept/Refuse</th>
-                        <th>Done</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($walking as $walks): ?>
-                        <tr>
-                            <td style='padding: 10px 20px;'><?php echo $walks['owner_name']; ?></td>
-                            <td style='padding: 10px 20px;'><b><?php echo $walks['phone_number']; ?></b></td>
-                            <td style='padding: 10px 20px;'><?php echo $walks['dog_name']; ?></td>
-                            <td style='padding: 10px 20px;'><?php echo $walks['breed']; ?></td>
-                            <td style='padding: 10px 20px;'><?php echo $walks['age']; ?></td>
-                            <td style='padding: 10px 20px;'><?php echo $walks['start_time']." - ".$walks['end_time']; ?></td>
-                            <td style='padding: 10px 20px;'><?php echo $walks['booking_date']; ?></td>
-                            <?php if ($walks['accepted'] == 0 && $walks['done'] == 0): ?>
-                                <td><button value='<?php echo $walks['walk_id']; ?>' id='accept' onclick='handleButtonClick(this, 1)'>Accept</button></td>
-                                <td>The walk is not accepted yet</td>
-                            <?php elseif($walks['accepted'] == 1 && $walks['done'] == 0): ?>
-                                <td><button value='<?php echo $walks['walk_id']; ?>' id='disable' onclick='handleButtonClick(this, 0)'>Refuse</button></td>
-                                <td><button value='<?php echo $walks['walk_id']; ?>' id='done' onclick='handleButtonClick(this, 2)'>Done</button></td>
-                            <?php elseif($walks['accepted'] == 1 && $walks['done'] == 1): ?>
-                                <td colspan='2'>This walk is done</td>
-                            <?php else: ?>
-                                <td colspan='2'>There appears to be an error with your account</td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
-    </div>
+<div class="content">
+    <h3><b>Requested walks:</b></h3>
+    <?php if (empty($walking)): ?>
+        <p>No walks found.</p>
+    <?php else: ?>
+        <small>Click on <button>decline</button> to refuse a walk, or on <button>accept</button> to accept a walk.</small>
+        <table>
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Phone number</th>
+                <th>Dog's name</th>
+                <th>Breed</th>
+                <th>Age</th>
+                <th>Start time - End time</th>
+                <th>Date</th>
+                <th>Accept/Refuse</th>
+                <th>Done</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($walking as $walks): ?>
+                <tr>
+                    <td style='padding: 10px 20px;'><?php echo $walks['owner_name']; ?></td>
+                    <td style='padding: 10px 20px;'><b><?php echo $walks['phone_number']; ?></b></td>
+                    <td style='padding: 10px 20px;'><?php echo $walks['dog_name']; ?></td>
+                    <td style='padding: 10px 20px;'><?php echo $walks['breed']; ?></td>
+                    <td style='padding: 10px 20px;'><?php echo $walks['age']; ?></td>
+                    <td style='padding: 10px 20px;'><?php echo $walks['start_time']." - ".$walks['end_time']; ?></td>
+                    <td style='padding: 10px 20px;'><?php echo $walks['booking_date']; ?></td>
+                    <?php if (($walks['accepted'] == 0 || $walks['accepted'] == 1) && $walks['done'] == 0): ?>
+                        <td><button value='<?php echo $walks['walk_id']; ?>' id='accept' onclick='handleButtonClick(this, 1)'>Accept</button>
+                            <button value='<?php echo $walks['walk_id']; ?>' id='disable' onclick='handleButtonClick(this, 0)'>Refuse</button><?php if($walks['accepted'] == 1) echo "Walk already accepted"; ?></td>
+                    <?php
+                    endif;
+                    if($walks['accepted'] == 1 && $walks['done'] == 0): ?>
+                        <td><button value='<?php echo $walks['walk_id']; ?>' id='done' onclick='handleButtonClick(this, 2)'>Done</button></td>
+                    <?php elseif ($walks['accepted'] == 0):?>
+                        <td><button value='<?php echo $walks['walk_id']; ?>' id='done' onclick='handleButtonClick(this, 2)' disabled>Done</button></td>
+                    <?php
+                    endif;
+                    if($walks['accepted'] == 1 && $walks['done'] == 1): ?>
+                        <td colspan='2'>This walk is done</td>
+                    <?php endif; ?>
+                    <?php if($walks['accepted'] == 0 && $walks['done'] == 1): ?>
+                        <td colspan='2'>There appears to be an error with your account</td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
 
-    <footer>
-        <?php include "footer.php"; ?>
-    </footer>
+<footer>
+    <?php include "footer.php"; ?>
+</footer>
 
-    <script>
-        function handleButtonClick(button, action) {
-            const id = button.value;
-            let url = 'update_walk_status.php';
-            let data = { id: id, action: action };
+<script>
+    function handleButtonClick(button, action) {
+        const id = button.value;
+        let url = 'update_walk_status.php';
+        let data = { id: id, action: action };
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -175,7 +182,7 @@ echo "<br><br><br>";
             .catch(error => {
                 console.error('Error:', error);
             });
-        }
-    </script>
+    }
+</script>
 </body>
 </html>

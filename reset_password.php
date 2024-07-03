@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         try {
             // Check if the reset token exists in the user table
-            $sql = "SELECT email FROM user WHERE reset_password=:token";
+            $sql = "SELECT * FROM user WHERE reset_password=:token";
             $query = $dbh->prepare($sql);
             $query->bindParam(':token', $reset_token, PDO::PARAM_STR);
             $query->execute();
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // If not found in user table, check the walker table
             if (!$user) {
-                $sql = "SELECT email FROM walker WHERE reset_password=:token";
+                $sql = "SELECT * FROM walker WHERE reset_password=:token";
                 $query = $dbh->prepare($sql);
                 $query->bindParam(':token', $reset_token, PDO::PARAM_STR);
                 $query->execute();
@@ -30,15 +30,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if ($user) {
-                $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
-                $update_sql = "UPDATE $table SET password=:password, reset_password=NULL WHERE reset_password=:token";
-                $update_query = $dbh->prepare($update_sql);
-                $update_query->bindParam(':password', $hashed_password, PDO::PARAM_STR);
-                $update_query->bindParam(':token', $reset_token, PDO::PARAM_STR);
-                $update_query->execute();
+                // Check if the new password is the same as the old password
+                if (password_verify($new_password, $user['password'])) {
+                    echo "<script>window.location.href = 'forgotten_password.php?passwd=1';</script>";
+                } else {
+                    // Hash the new password and update the database
+                    $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
+                    $update_sql = "UPDATE $table SET password=:password, reset_password=NULL WHERE reset_password=:token";
+                    $update_query = $dbh->prepare($update_sql);
+                    $update_query->bindParam(':password', $hashed_password, PDO::PARAM_STR);
+                    $update_query->bindParam(':token', $reset_token, PDO::PARAM_STR);
+                    $update_query->execute();
 
-                echo "<script>alert('Password reset successfully.');</script>";
-                echo "<script>window.location.href = 'login.php';</script>";
+                    echo "<script>alert('Password reset successfully.');</script>";
+                    echo "<script>window.location.href = 'login.php';</script>";
+                }
             } else {
                 echo "<script>alert('Invalid or expired token.');</script>";
             }
@@ -56,17 +62,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Reset Password</title>
 </head>
 <body>
-<form action="reset_password.php" method="post">
-    <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
-    <div>
-        <label for="new_password">New Password:</label>
-        <input type="password" id="new_password" name="new_password" required>
-    </div>
-    <div>
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" id="confirm_password" name="confirm_password" required>
-    </div>
-    <button type="submit">Reset Password</button>
-</form>
+<?php
+include "navigation.php";
+?>
+<div style="display: flex; justify-content: center; margin-top: 20px; padding: 80px 0 50px 0;">
+    <form action="reset_password.php" method="post">
+        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token']); ?>">
+        <div>
+            <label for="new_password">New Password:</label>
+            <input type="password" id="new_password" name="new_password" required>
+        </div>
+        <div>
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+        </div>
+        <button type="submit" class="btn btn-success" style="border-radius: 0; border: 2px solid black;">Reset Password</button>
+    </form>
+</div>
 </body>
 </html>
+  

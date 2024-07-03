@@ -1,6 +1,5 @@
 <?php
 include "navigation.php";
-session_start();
 ?>
 
     <div class="background-hero-img">
@@ -48,8 +47,10 @@ session_start();
                     <!-- Contact Form Block -->
                     <div class="col-xl-6 message-part" style="padding-top: 50px; color:white;">
                         <form action="contact_us.php" method="post" id='contactForm'>
-                            <div class="mb-3"><small style="color: #ff0000"></small>
-                                <select id="type" name="type" required>
+                            <div class="mb-3">
+                                <label for="typeOfComplaint">Type of complaint:</label>
+                                <small style="display: block; color: #FF0000"></small>
+                                <select id="typeOfComplaint" name="typeOfComplaint" required>
                                     <option value="-1">Choose reason for contacting</option>
                                     <option value="violation">Violation (stalking, contacting after the job is done, insulting...)</option>
                                     <option value="falseAccount">Fake account</option>
@@ -58,11 +59,11 @@ session_start();
                             </div>
                             <div class="row g-4">
                                 <div class="col-6 mb-3">
-                                    <label for="fname" class="form-label">Fname</label>
+                                    <label for="fname" class="form-label">First name</label>
                                     <input type="text" class="form-control" id="fname" name="fname" placeholder="Luisa">
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <label for="Lname" class="form-label">Lname</label>
+                                    <label for="Lname" class="form-label">Last name</label>
                                     <input type="text" class="form-control" id="Lname" name="Lname" placeholder="Klark">
                                 </div>
                             </div>
@@ -76,6 +77,7 @@ session_start();
                             </div>
                             <div class="mb-3">
                                 <label for="exampleFormControlTextarea1" class="form-label">Message</label>
+                                <small style="display: block; color: #FF0000"></small>
                                 <textarea class="form-control" id="exampleFormControlTextarea1" name="exampleFormControlTextarea1" rows="6" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-dark">Send Message</button>
@@ -86,6 +88,8 @@ session_start();
 
         </div>
     </div>
+
+<!-- JS-ZA CONTACT -->
     <script>
         window.addEventListener("DOMContentLoaded", init);
 
@@ -106,23 +110,39 @@ session_start();
         }
         function validateForm() {
             let isValid = true;
-            const comType = document.getElementById('type');
-            if(comType.value == '-1')
-            {
-                const formField = comType.parentElement;
-                formField.classList.add('error');
+            const comType = document.getElementById('typeOfComplaint');
+            const message = document.getElementById('exampleFormControlTextarea1');
 
-                const error = formField.querySelector('small');
-                error.innerText = 'Please select a type of complaint';
+            if (comType.value == '-1') {
+                showErrorMessage(comType, "Please select a type of complaint");
                 isValid = false;
+            } else {
+                hideErrorMessage(comType);
             }
-            else{
-                const formField = comType.parentElement;
-                formField.classList.remove('error');
-                const error = formField.querySelector('small');
-                error.innerText = "";
+
+            if (message.value.trim().length < 10) {
+                showErrorMessage(message, "Message must be at least 10 characters");
+                isValid = false;
+            } else {
+                hideErrorMessage(message);
             }
+
             return isValid;
+        }
+
+        function showErrorMessage(field, message) {
+            const formField = field.parentElement;
+            formField.classList.add('error');
+
+            const error = formField.querySelector('small');
+            error.innerText = message;
+        }
+
+        function hideErrorMessage(field) {
+            const formField = field.parentElement;
+            formField.classList.remove('error');
+            const error = formField.querySelector('small');
+            error.innerText = "";
         }
 
         function sendData(){
@@ -130,13 +150,13 @@ session_start();
             const Lname = document.getElementById('Lname');
             const phone = document.getElementById('Phone-num');
             const message = document.getElementById('exampleFormControlTextarea1');
-            const comType = document.getElementById('type');
+            const comType = document.getElementById('typeOfComplaint');
             const Gmail = document.getElementById('Gmail');
 
             const resultDiv = document.getElementById('result');
 
             let request = new XMLHttpRequest();
-            let url = "contact.php";
+            let url = "contact_us.php";
 
             request.open("POST", url, true);
             request.setRequestHeader("Content-Type", "application/json");
@@ -152,7 +172,7 @@ session_start();
                 "Lname": Lname.value,
                 "Phone-num": parseInt(phone.value),
                 "exampleFormControlTextarea1": message.value,
-                "type": comType.value,
+                "typeOfComplaint": comType.value,
                 "Gmail": Gmail.value
             });
 

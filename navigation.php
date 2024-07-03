@@ -10,8 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap Icons CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css"/>
@@ -19,14 +19,14 @@
     <style>
         /* Custom button styles */
         .btn-green {
-            background-color: #28a745; /* Green background color */
-            color: #fff; /* White text color */
-            border-radius: 20px; /* Rounded corners */
+            background-color: #28a745; 
+            color: #fff; 
+            border-radius: 20px; 
         }
 
         .btn-green:hover,
         .btn-green:focus {
-            background-color: #218838; /* Darker green on hover/focus */
+            background-color: #218838; /
             color: #fff;
         }
 
@@ -92,6 +92,14 @@
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="nav-link">
                         <?php if(isset($_SESSION['name']) && $_SESSION['role']=='user'): ?>
                             <li><a class="dropdown-item" href="booking.php">Booking</a></li>
+                            <li><a class="dropdown-item" href="rate_walker.php">Rate your walker</a></li>
+                        <?php elseif(isset($_SESSION['name']) && ($_SESSION['role']=='walker' || $_SESSION['role']=='admin')): ?>
+                            <li><a class="dropdown-item" href="accept_a_walk.php">Walk requests</a></li>
+                            <li><a class="dropdown-item" href="diary.php">Diary</a></li>
+                            <li><a class="dropdown-item" href="change_profile_picture.php">Change Profile Picture</a></li>
+                        <?php endif; ?>
+                        <?php if($_SESSION['role']=='admin'): ?>
+                            <li><a class="dropdown-item" href="admin_control.php">Admin Control</a></li>
                         <?php endif; ?>
                         <li><a class="dropdown-item" href="walkers.php">Our Walkers</a></li>
                     </ul>
@@ -115,12 +123,19 @@
                 <?php else: ?>
                     <li class="nav-item d-sm-none">
                         <a class="nav-link d-flex align-items-center" href="profile.php">
-                            <i class="fas fa-user"></i>
+                            <i class="bi bi-person"></i>
                         </a>
                     </li>
                     <li class="nav-item d-sm-none">
                         <a class="nav-link d-flex align-items-center" href="logout.php">Log Out</a>
                     </li>
+                    <?php if ($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin'): ?>
+                        <li class="nav-item d-sm-none">
+                            <a class="nav-link d-flex align-items-center" href="list_messages.php">
+                                <i class="bi bi-chat-dots"></i>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 <?php endif; ?>
             </ul>
         </div>
@@ -137,9 +152,18 @@
                 <?php else: ?>
                     <li class="nav-item">
                         <a class="btn btn-green me-2" href="profile.php">
-                            <i class="fas fa-user"></i>
+                            <i class="bi bi-person"></i>
                         </a>
                     </li>
+                
+                    <?php if ($_SESSION['role'] == 'walker' || $_SESSION['role'] == 'admin'): ?>
+                        <li class="nav-item">
+                            <a class="btn btn-green me-2" href="list_messages.php">
+                                <i class="bi bi-chat-dots"></i>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
                     <li class="nav-item">
                         <a class="btn btn-green" href="logout.php">Log Out</a>
                     </li>
@@ -167,7 +191,7 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+       	integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 
 <!-- Custom JS for opening and closing forms -->

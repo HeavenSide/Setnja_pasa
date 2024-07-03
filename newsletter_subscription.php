@@ -10,7 +10,7 @@ require 'PHPMailer/src/SMTP.php';
 require_once 'db_config.php';
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
-    $username = $_POST['email'];
+    $username = $_POST['form5Example2'];
 
     $mail = new PHPMailer(true);
     $mailMessage = "You have successfully subscribed to our newsletter!";

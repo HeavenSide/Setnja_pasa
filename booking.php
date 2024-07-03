@@ -7,8 +7,10 @@
 </head>
 <body>
 
-<?php include "navigation.php";
+<?php
+include "navigation.php";
 session_start();
+require_once "db_config.php";
 ?>
 
 <div class="booking-form" style="padding-top: 80px; width: 100%">
@@ -72,10 +74,25 @@ session_start();
                 <div class="form-group">
                     <label for="dogWalker">Choose Dog Walker</label>
                     <select id="dogWalker" name="dogWalker" class="form-control" required>
-                        <option value="" hidden>Select a dog walker</option>
-                        <option value="walker1">Walker 1</option>
-                        <option value="walker2">Walker 2</option>
-                        <option value="walker3">Walker 3</option>
+                        <?php
+                        if (!isset($_GET['walker'])) {
+                            echo "<option value=\"-1\" hidden>Select a dog walker</option>";
+                            $sql = "SELECT walker_id, email FROM walker WHERE active=1 AND accept=1 AND approved=1";
+                            $query = $dbh->prepare($sql);
+                            $query->execute();
+                            $results = $query->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($results as $res) {
+                                echo "<option value='" . $res['email'] . "'>" . $res['email'] . "</option>";
+                            }
+                        } elseif (isset($_GET['walker'])) {
+                            $sql = "SELECT email FROM walker WHERE walker_id = :walker";
+                            $query = $dbh->prepare($sql);
+                            $query->bindParam(':walker', $_GET['walker'], PDO::PARAM_STR);
+                            $query->execute();
+                            $result = $query->fetch(PDO::FETCH_ASSOC);
+                            echo "<option value='".$result['email']."'>" . $result['email'] . "</option>";
+                        }
+                        ?>
                     </select>
                 </div>
 
@@ -91,8 +108,6 @@ session_start();
         <button type="submit" class="submit-btn btn btn-primary mt-3">Book Now</button>
     </form>
 </div>
-
-
 
 <div class="text-booking-abt">
     <div class="instruction-txt">
@@ -117,8 +132,6 @@ session_start();
         </div>
     </div>
 </div>
-
-
 
 <?php
 include "promotion.php";
