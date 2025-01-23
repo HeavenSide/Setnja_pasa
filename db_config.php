@@ -1,9 +1,9 @@
 <?php
 define("DB", [
     'HOST' => 'localhost',
-    'USER' => 'four2',
-    'PASSWORD' => '6pxxIS2mnrjtjIz',
-    'NAME' => '42'
+    'USER' => '',
+    'PASSWORD' => '',
+    'NAME' => ''
 ]);
 
 try 
